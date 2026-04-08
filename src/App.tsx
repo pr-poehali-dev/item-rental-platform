@@ -198,10 +198,18 @@ function LoginScreen({ onSwitch }: { onSwitch: () => void }) {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <span className="text-muted-foreground text-sm">Нет аккаунта? </span>
-          <button onClick={onSwitch} className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">
-            Зарегистрироваться
+        <div className="mt-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-muted-foreground">или</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+          <button
+            onClick={onSwitch}
+            className="w-full glass border border-purple-500/30 hover:border-purple-500/60 hover:bg-purple-500/5 text-purple-400 font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300"
+          >
+            <Icon name="UserPlus" size={18} />
+            <span>Зарегистрироваться</span>
           </button>
         </div>
       </div>
@@ -297,10 +305,18 @@ function RegisterScreen({ onSwitch }: { onSwitch: () => void }) {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <span className="text-muted-foreground text-sm">Уже есть аккаунт? </span>
-          <button onClick={onSwitch} className="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">
-            Войти
+        <div className="mt-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-muted-foreground">или</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+          <button
+            onClick={onSwitch}
+            className="w-full glass border border-purple-500/30 hover:border-purple-500/60 hover:bg-purple-500/5 text-purple-400 font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300"
+          >
+            <Icon name="LogIn" size={18} />
+            <span>Войти</span>
           </button>
         </div>
       </div>

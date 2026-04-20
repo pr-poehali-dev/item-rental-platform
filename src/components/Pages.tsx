@@ -389,8 +389,8 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
             {[{ label: "Push-уведомления", value: notifications, setter: setNotifications }, { label: "Двухфакторная аутентификация", value: twoFactor, setter: setTwoFactor }].map((s, idx) => (
               <div key={idx} className="flex items-center justify-between py-2">
                 <span className="text-sm">{s.label}</span>
-                <button onClick={() => s.setter(!s.value)} className={`w-12 h-6 rounded-full transition-all duration-300 relative flex-shrink-0 ${s.value ? "bg-gradient-to-r from-purple-500 to-purple-600" : "bg-white/10"}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all duration-300 ${s.value ? "left-7" : "left-1"}`} />
+                <button onClick={() => s.setter(!s.value)} className={`w-12 h-6 rounded-full transition-all duration-300 relative flex-shrink-0 ${s.value ? "bg-gradient-to-r from-purple-500 to-purple-600" : "bg-white/20"}`}>
+                  <div className={`absolute top-1 w-4 h-4 rounded-full shadow transition-all duration-300 ${s.value ? "bg-white left-7" : "bg-white/40 left-1"}`} />
                 </button>
               </div>
             ))}

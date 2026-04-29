@@ -339,6 +339,8 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
   const [twoFactor, setTwoFactor] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(user.name);
+  const [editingCity, setEditingCity] = useState(false);
+  const [cityValue, setCityValue] = useState("Москва");
 
   return (
     <div className="min-h-screen px-6 md:px-10 pt-8">
@@ -399,13 +401,34 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
                 </button>
               )}
             </div>
-            {/* Остальные поля */}
-            {[{ label: "Email", value: user.email }, { label: "Город", value: "Москва" }].map(f => (
-              <div key={f.label} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                <span className="text-sm text-muted-foreground">{f.label}</span>
-                <div className="flex items-center gap-2"><span className="text-sm font-medium truncate max-w-[180px]">{f.value}</span><Icon name="ChevronRight" size={14} className="text-muted-foreground" /></div>
-              </div>
-            ))}
+            {/* Email */}
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <span className="text-sm text-muted-foreground">Email</span>
+              <div className="flex items-center gap-2"><span className="text-sm font-medium truncate max-w-[180px]">{user.email}</span><Icon name="ChevronRight" size={14} className="text-muted-foreground" /></div>
+            </div>
+            {/* Город — редактируемый */}
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm text-muted-foreground">Город</span>
+              {editingCity ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    autoFocus
+                    value={cityValue}
+                    onChange={e => setCityValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") setEditingCity(false); if (e.key === "Escape") { setCityValue(cityValue); setEditingCity(false); } }}
+                    className="bg-white/10 border border-purple-500/40 rounded-lg px-3 py-1 text-sm font-medium outline-none w-40 text-right"
+                  />
+                  <button onClick={() => setEditingCity(false)} className="text-purple-400 hover:text-purple-300 transition-colors">
+                    <Icon name="Check" size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setEditingCity(true)} className="flex items-center gap-2 hover:text-purple-300 transition-colors">
+                  <span className="text-sm font-medium truncate max-w-[180px]">{cityValue}</span>
+                  <Icon name="ChevronRight" size={14} className="text-muted-foreground" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

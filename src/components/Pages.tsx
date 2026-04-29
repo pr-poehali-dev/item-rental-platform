@@ -339,14 +339,18 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
   const [twoFactor, setTwoFactor] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(() => localStorage.getItem("renthub_profile_name") || user.name);
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [emailValue, setEmailValue] = useState(() => localStorage.getItem("renthub_profile_email") || user.email);
   const [editingCity, setEditingCity] = useState(false);
   const [cityValue, setCityValue] = useState(() => localStorage.getItem("renthub_profile_city") || "Москва");
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     setEditingName(false);
+    setEditingEmail(false);
     setEditingCity(false);
     localStorage.setItem("renthub_profile_name", nameValue);
+    localStorage.setItem("renthub_profile_email", emailValue);
     localStorage.setItem("renthub_profile_city", cityValue);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -411,10 +415,29 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
                 </button>
               )}
             </div>
-            {/* Email */}
+            {/* Email — редактируемый */}
             <div className="flex items-center justify-between py-2 border-b border-white/5">
               <span className="text-sm text-muted-foreground">Email</span>
-              <div className="flex items-center gap-2"><span className="text-sm font-medium truncate max-w-[180px]">{user.email}</span><Icon name="ChevronRight" size={14} className="text-muted-foreground" /></div>
+              {editingEmail ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    autoFocus
+                    type="email"
+                    value={emailValue}
+                    onChange={e => setEmailValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") setEditingEmail(false); if (e.key === "Escape") { setEmailValue(user.email); setEditingEmail(false); } }}
+                    className="bg-white/10 border border-purple-500/40 rounded-lg px-3 py-1 text-sm font-medium outline-none w-44 text-right"
+                  />
+                  <button onClick={() => setEditingEmail(false)} className="text-purple-400 hover:text-purple-300 transition-colors">
+                    <Icon name="Check" size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setEditingEmail(true)} className="flex items-center gap-2 hover:text-purple-300 transition-colors">
+                  <span className="text-sm font-medium truncate max-w-[180px]">{emailValue}</span>
+                  <Icon name="ChevronRight" size={14} className="text-muted-foreground" />
+                </button>
+              )}
             </div>
             {/* Город — редактируемый */}
             <div className="flex items-center justify-between py-2">

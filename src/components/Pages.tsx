@@ -337,6 +337,8 @@ export function HistoryPage({ rentals, statusLabel }: { rentals: ActiveRental[];
 export function ProfilePage({ user, logout }: { user: User; logout: () => void }) {
   const [notifications, setNotifications] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState(user.name);
 
   return (
     <div className="min-h-screen px-6 md:px-10 pt-8">
@@ -374,7 +376,31 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
         <div className="glass border border-white/8 rounded-2xl p-5">
           <h3 className="font-semibold mb-4 flex items-center gap-2"><Icon name="User" size={16} className="text-purple-400" />Личные данные</h3>
           <div className="space-y-3">
-            {[{ label: "Имя", value: user.name }, { label: "Email", value: user.email }, { label: "Город", value: "Москва" }].map(f => (
+            {/* Имя — редактируемое */}
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <span className="text-sm text-muted-foreground">Имя</span>
+              {editingName ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    autoFocus
+                    value={nameValue}
+                    onChange={e => setNameValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") setEditingName(false); if (e.key === "Escape") { setNameValue(user.name); setEditingName(false); } }}
+                    className="bg-white/10 border border-purple-500/40 rounded-lg px-3 py-1 text-sm font-medium outline-none w-40 text-right"
+                  />
+                  <button onClick={() => setEditingName(false)} className="text-purple-400 hover:text-purple-300 transition-colors">
+                    <Icon name="Check" size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setEditingName(true)} className="flex items-center gap-2 hover:text-purple-300 transition-colors">
+                  <span className="text-sm font-medium truncate max-w-[180px]">{nameValue}</span>
+                  <Icon name="ChevronRight" size={14} className="text-muted-foreground" />
+                </button>
+              )}
+            </div>
+            {/* Остальные поля */}
+            {[{ label: "Email", value: user.email }, { label: "Город", value: "Москва" }].map(f => (
               <div key={f.label} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
                 <span className="text-sm text-muted-foreground">{f.label}</span>
                 <div className="flex items-center gap-2"><span className="text-sm font-medium truncate max-w-[180px]">{f.value}</span><Icon name="ChevronRight" size={14} className="text-muted-foreground" /></div>

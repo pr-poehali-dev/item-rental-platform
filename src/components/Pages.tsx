@@ -338,9 +338,19 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
   const [notifications, setNotifications] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
   const [editingName, setEditingName] = useState(false);
-  const [nameValue, setNameValue] = useState(user.name);
+  const [nameValue, setNameValue] = useState(() => localStorage.getItem("renthub_profile_name") || user.name);
   const [editingCity, setEditingCity] = useState(false);
-  const [cityValue, setCityValue] = useState("Москва");
+  const [cityValue, setCityValue] = useState(() => localStorage.getItem("renthub_profile_city") || "Москва");
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    setEditingName(false);
+    setEditingCity(false);
+    localStorage.setItem("renthub_profile_name", nameValue);
+    localStorage.setItem("renthub_profile_city", cityValue);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
 
   return (
     <div className="min-h-screen px-6 md:px-10 pt-8">
@@ -430,6 +440,13 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
               )}
             </div>
           </div>
+          <button
+            onClick={handleSave}
+            className={`mt-4 w-full py-3 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${saved ? "bg-green-500/20 border border-green-500/40 text-green-400" : "bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white"}`}
+          >
+            <Icon name={saved ? "Check" : "Save"} size={16} />
+            {saved ? "Сохранено!" : "Сохранить изменения"}
+          </button>
         </div>
 
         <div className="glass border border-white/8 rounded-2xl p-5">

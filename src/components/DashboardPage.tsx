@@ -2,9 +2,45 @@ import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import { MyListing, ActiveRental } from "@/types";
 
-export function DashboardPage({ listings }: { listings: MyListing[] }) {
+const EMOJIS = ["📦", "💻", "📷", "🚲", "🛴", "🚁", "⛺", "📽️", "🔥", "🎸", "🏄", "🎿", "🛶", "🔧", "🎮"];
+
+interface NewListingForm {
+  item: string;
+  emoji: string;
+  price: string;
+  period: string;
+}
+
+export function DashboardPage({ listings: initialListings }: { listings: MyListing[] }) {
+  const [listings, setListings] = useState<MyListing[]>(initialListings);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState<NewListingForm>({ item: "", emoji: "📦", price: "", period: "сутки" });
+  const [submitted, setSubmitted] = useState(false);
+
   const totalEarned = listings.reduce((s, l) => s + l.earned, 0);
   const activeCount = listings.filter(l => l.status === "active").length;
+
+  const handleSubmit = () => {
+    if (!form.item.trim() || !form.price) return;
+    const newListing: MyListing = {
+      id: Date.now(),
+      item: form.item.trim(),
+      emoji: form.emoji,
+      price: Number(form.price),
+      period: form.period,
+      status: "active",
+      requests: 0,
+      earned: 0,
+    };
+    setListings(prev => [newListing, ...prev]);
+    setSubmitted(true);
+    setTimeout(() => {
+      setShowModal(false);
+      setSubmitted(false);
+      setForm({ item: "", emoji: "📦", price: "", period: "сутки" });
+    }, 1200);
+  };
+
   return (
     <div className="min-h-screen px-6 md:px-10 pt-8">
       <div className="mb-8">
@@ -25,7 +61,10 @@ export function DashboardPage({ listings }: { listings: MyListing[] }) {
           </div>
         ))}
       </div>
-      <button className="w-full btn-primary text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 mb-6 group">
+      <button
+        onClick={() => setShowModal(true)}
+        className="w-full btn-primary text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 mb-6 group"
+      >
         <Icon name="Plus" size={20} /><span>Добавить объявление</span>
         <Icon name="ArrowRight" size={16} className="group-hover:translate-x-1 transition-transform" />
       </button>
@@ -47,7 +86,10 @@ export function DashboardPage({ listings }: { listings: MyListing[] }) {
               <div className="text-[10px] text-muted-foreground">заработано</div>
               <div className="flex gap-1 mt-2 justify-end">
                 <button className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-purple-500/40 transition-all"><Icon name="Pencil" size={12} className="text-muted-foreground" /></button>
-                <button className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-red-500/40 transition-all"><Icon name="Trash2" size={12} className="text-muted-foreground" /></button>
+                <button
+                  onClick={() => setListings(prev => prev.filter(x => x.id !== l.id))}
+                  className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-red-500/40 transition-all"
+                ><Icon name="Trash2" size={12} className="text-muted-foreground" /></button>
               </div>
             </div>
           </div>
@@ -70,6 +112,88 @@ export function DashboardPage({ listings }: { listings: MyListing[] }) {
           </button>
         </div>
       </div>
+
+      {/* Модальное окно */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
+          <div className="w-full max-w-md glass border border-white/10 rounded-3xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-unbounded font-bold text-lg">Новое объявление</h2>
+              <button onClick={() => setShowModal(false)} className="w-8 h-8 glass rounded-xl flex items-center justify-center border border-white/10 hover:border-white/30 transition-all">
+                <Icon name="X" size={16} className="text-muted-foreground" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Название */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Название вещи</label>
+                <input
+                  autoFocus
+                  value={form.item}
+                  onChange={e => setForm(f => ({ ...f, item: e.target.value }))}
+                  placeholder="Например: MacBook Pro 14"
+                  className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground outline-none transition-all text-sm"
+                />
+              </div>
+
+              {/* Эмодзи */}
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Значок</label>
+                <div className="flex flex-wrap gap-2">
+                  {EMOJIS.map(e => (
+                    <button
+                      key={e}
+                      onClick={() => setForm(f => ({ ...f, emoji: e }))}
+                      className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${form.emoji === e ? "bg-purple-500/30 border border-purple-500/60" : "glass border border-white/10 hover:border-white/30"}`}
+                    >{e}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Цена и период */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Цена (₽)</label>
+                  <input
+                    type="number"
+                    value={form.price}
+                    onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                    placeholder="1 500"
+                    className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground outline-none transition-all text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Период</label>
+                  <select
+                    value={form.period}
+                    onChange={e => setForm(f => ({ ...f, period: e.target.value }))}
+                    className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-background text-foreground outline-none transition-all text-sm"
+                  >
+                    <option value="час">час</option>
+                    <option value="сутки">сутки</option>
+                    <option value="неделя">неделя</option>
+                    <option value="месяц">месяц</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={!form.item.trim() || !form.price}
+              className={`mt-6 w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                submitted
+                  ? "bg-green-500/20 border border-green-500/40 text-green-400"
+                  : "bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              }`}
+            >
+              <Icon name={submitted ? "Check" : "Plus"} size={18} />
+              {submitted ? "Объявление размещено!" : "Разместить объявление"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

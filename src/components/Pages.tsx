@@ -364,14 +364,14 @@ export function ProfilePage({ user, logout }: { user: User; logout: () => void }
         <div className="relative z-10 flex items-center gap-5">
           <div className="relative">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-unbounded font-bold text-3xl shadow-lg shadow-purple-500/30">
-              {user.name.charAt(0).toUpperCase()}
+              {nameValue.charAt(0).toUpperCase()}
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-background flex items-center justify-center">
               <Icon name="Check" size={10} className="text-background" />
             </div>
           </div>
           <div className="flex-1">
-            <div className="font-unbounded font-bold text-xl">{user.name}</div>
+            <div className="font-unbounded font-bold text-xl">{nameValue}</div>
             <div className="text-muted-foreground text-sm mb-2">{user.email}</div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full font-medium">Pro аккаунт</span>

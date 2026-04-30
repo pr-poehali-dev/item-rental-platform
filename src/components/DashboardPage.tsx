@@ -14,30 +14,53 @@ interface NewListingForm {
 export function DashboardPage({ listings: initialListings }: { listings: MyListing[] }) {
   const [listings, setListings] = useState<MyListing[]>(initialListings);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<NewListingForm>({ item: "", emoji: "📦", price: "", period: "сутки" });
   const [submitted, setSubmitted] = useState(false);
 
   const totalEarned = listings.reduce((s, l) => s + l.earned, 0);
   const activeCount = listings.filter(l => l.status === "active").length;
 
+  const openCreate = () => {
+    setEditingId(null);
+    setForm({ item: "", emoji: "📦", price: "", period: "сутки" });
+    setSubmitted(false);
+    setShowModal(true);
+  };
+
+  const openEdit = (l: MyListing) => {
+    setEditingId(l.id);
+    setForm({ item: l.item, emoji: l.emoji, price: String(l.price), period: l.period });
+    setSubmitted(false);
+    setShowModal(true);
+  };
+
   const handleSubmit = () => {
     if (!form.item.trim() || !form.price) return;
-    const newListing: MyListing = {
-      id: Date.now(),
-      item: form.item.trim(),
-      emoji: form.emoji,
-      price: Number(form.price),
-      period: form.period,
-      status: "active",
-      requests: 0,
-      earned: 0,
-    };
-    setListings(prev => [newListing, ...prev]);
+    if (editingId !== null) {
+      setListings(prev => prev.map(l => l.id === editingId
+        ? { ...l, item: form.item.trim(), emoji: form.emoji, price: Number(form.price), period: form.period }
+        : l
+      ));
+    } else {
+      const newListing: MyListing = {
+        id: Date.now(),
+        item: form.item.trim(),
+        emoji: form.emoji,
+        price: Number(form.price),
+        period: form.period,
+        status: "active",
+        requests: 0,
+        earned: 0,
+      };
+      setListings(prev => [newListing, ...prev]);
+    }
     setSubmitted(true);
     setTimeout(() => {
       setShowModal(false);
       setSubmitted(false);
       setForm({ item: "", emoji: "📦", price: "", period: "сутки" });
+      setEditingId(null);
     }, 1200);
   };
 
@@ -62,7 +85,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
         ))}
       </div>
       <button
-        onClick={() => setShowModal(true)}
+        onClick={openCreate}
         className="w-full btn-primary text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 mb-6 group"
       >
         <Icon name="Plus" size={20} /><span>Добавить объявление</span>
@@ -85,7 +108,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
               <div className="text-sm font-bold text-green-400">{l.earned.toLocaleString()} ₽</div>
               <div className="text-[10px] text-muted-foreground">заработано</div>
               <div className="flex gap-1 mt-2 justify-end">
-                <button className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-purple-500/40 transition-all"><Icon name="Pencil" size={12} className="text-muted-foreground" /></button>
+                <button onClick={() => openEdit(l)} className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-purple-500/40 transition-all"><Icon name="Pencil" size={12} className="text-muted-foreground" /></button>
                 <button
                   onClick={() => setListings(prev => prev.filter(x => x.id !== l.id))}
                   className="w-7 h-7 glass rounded-lg flex items-center justify-center border border-white/10 hover:border-red-500/40 transition-all"
@@ -118,7 +141,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div className="w-full max-w-md glass border border-white/10 rounded-3xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-unbounded font-bold text-lg">Новое объявление</h2>
+              <h2 className="font-unbounded font-bold text-lg">{editingId !== null ? "Редактировать" : "Новое объявление"}</h2>
               <button onClick={() => setShowModal(false)} className="w-8 h-8 glass rounded-xl flex items-center justify-center border border-white/10 hover:border-white/30 transition-all">
                 <Icon name="X" size={16} className="text-muted-foreground" />
               </button>
@@ -189,7 +212,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
               }`}
             >
               <Icon name={submitted ? "Check" : "Plus"} size={18} />
-              {submitted ? "Объявление размещено!" : "Разместить объявление"}
+              {submitted ? (editingId !== null ? "Сохранено!" : "Объявление размещено!") : (editingId !== null ? "Сохранить изменения" : "Разместить объявление")}
             </button>
           </div>
         </div>

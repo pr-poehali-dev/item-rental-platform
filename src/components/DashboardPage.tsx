@@ -139,36 +139,36 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
       {/* Модальное окно */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
-          <div className="w-full max-w-md glass border border-white/10 rounded-3xl p-6 shadow-2xl">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-unbounded font-bold text-lg">{editingId !== null ? "Редактировать" : "Новое объявление"}</h2>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 glass rounded-xl flex items-center justify-center border border-white/10 hover:border-white/30 transition-all">
-                <Icon name="X" size={16} className="text-muted-foreground" />
+              <h2 className="font-unbounded font-bold text-lg text-gray-900">{editingId !== null ? "Редактировать" : "Новое объявление"}</h2>
+              <button onClick={() => setShowModal(false)} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-all">
+                <Icon name="X" size={16} className="text-gray-500" />
               </button>
             </div>
 
             <div className="space-y-4">
               {/* Название */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Название вещи</label>
+                <label className="text-xs text-gray-500 mb-1.5 block font-medium">Название вещи</label>
                 <input
                   autoFocus
                   value={form.item}
                   onChange={e => setForm(f => ({ ...f, item: e.target.value }))}
                   placeholder="Например: MacBook Pro 14"
-                  className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground outline-none transition-all text-sm"
+                  className="w-full border border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-3 bg-white text-gray-900 placeholder:text-gray-400 outline-none transition-all text-sm"
                 />
               </div>
 
               {/* Эмодзи */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Значок</label>
+                <label className="text-xs text-gray-500 mb-1.5 block font-medium">Значок</label>
                 <div className="flex flex-wrap gap-2">
                   {EMOJIS.map(e => (
                     <button
                       key={e}
                       onClick={() => setForm(f => ({ ...f, emoji: e }))}
-                      className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${form.emoji === e ? "bg-purple-500/30 border border-purple-500/60" : "glass border border-white/10 hover:border-white/30"}`}
+                      className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all ${form.emoji === e ? "bg-purple-100 border-2 border-purple-400" : "bg-gray-100 border border-gray-200 hover:bg-gray-200"}`}
                     >{e}</button>
                   ))}
                 </div>
@@ -177,21 +177,21 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
               {/* Цена и период */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Цена (₽)</label>
+                  <label className="text-xs text-gray-500 mb-1.5 block font-medium">Цена (₽)</label>
                   <input
                     type="number"
                     value={form.price}
                     onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                     placeholder="1 500"
-                    className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground outline-none transition-all text-sm"
+                    className="w-full border border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 rounded-xl px-4 py-3 bg-white text-gray-900 placeholder:text-gray-400 outline-none transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Период</label>
+                  <label className="text-xs text-gray-500 mb-1.5 block font-medium">Период</label>
                   <select
                     value={form.period}
                     onChange={e => setForm(f => ({ ...f, period: e.target.value }))}
-                    className="w-full glass border border-white/10 focus:border-purple-500/50 rounded-xl px-4 py-3 bg-background text-foreground outline-none transition-all text-sm"
+                    className="w-full border border-gray-200 focus:border-purple-400 rounded-xl px-4 py-3 bg-white text-gray-900 outline-none transition-all text-sm"
                   >
                     <option value="час">час</option>
                     <option value="сутки">сутки</option>
@@ -207,7 +207,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
               disabled={!form.item.trim() || !form.price}
               className={`mt-6 w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                 submitted
-                  ? "bg-green-500/20 border border-green-500/40 text-green-400"
+                  ? "bg-green-50 border border-green-300 text-green-600"
                   : "bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white disabled:opacity-40 disabled:cursor-not-allowed"
               }`}
             >

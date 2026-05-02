@@ -138,7 +138,7 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
 
       {/* Модальное окно */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
           <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-unbounded font-bold text-lg text-gray-900">{editingId !== null ? "Редактировать" : "Новое объявление"}</h2>

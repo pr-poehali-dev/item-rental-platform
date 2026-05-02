@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 import { MyListing, ActiveRental } from "@/types";
 
@@ -17,6 +17,21 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<NewListingForm>({ item: "", emoji: "📦", price: "", period: "сутки" });
   const [submitted, setSubmitted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const prevShowModal = useRef(false);
+
+  useEffect(() => {
+    if (showModal && !prevShowModal.current) {
+      requestAnimationFrame(() => setVisible(true));
+    }
+    if (!showModal) setVisible(false);
+    prevShowModal.current = showModal;
+  }, [showModal]);
+
+  const closeModal = () => {
+    setVisible(false);
+    setTimeout(() => setShowModal(false), 200);
+  };
 
   const totalEarned = listings.reduce((s, l) => s + l.earned, 0);
   const activeCount = listings.filter(l => l.status === "active").length;
@@ -57,11 +72,14 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
     }
     setSubmitted(true);
     setTimeout(() => {
-      setShowModal(false);
-      setSubmitted(false);
-      setForm({ item: "", emoji: "📦", price: "", period: "сутки" });
-      setEditingId(null);
-    }, 1200);
+      setVisible(false);
+      setTimeout(() => {
+        setShowModal(false);
+        setSubmitted(false);
+        setForm({ item: "", emoji: "📦", price: "", period: "сутки" });
+        setEditingId(null);
+      }, 200);
+    }, 1000);
   };
 
   return (
@@ -138,11 +156,14 @@ export function DashboardPage({ listings: initialListings }: { listings: MyListi
 
       {/* Модальное окно */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm" onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl">
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm transition-all duration-200 ${visible ? "bg-black/60" : "bg-black/0"}`}
+          onClick={e => { if (e.target === e.currentTarget) closeModal(); }}
+        >
+          <div className={`w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl transition-all duration-200 ${visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"}`}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-unbounded font-bold text-lg text-gray-900">{editingId !== null ? "Редактировать" : "Новое объявление"}</h2>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-all">
+              <button onClick={closeModal} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-all">
                 <Icon name="X" size={16} className="text-gray-500" />
               </button>
             </div>
